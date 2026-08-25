@@ -13,6 +13,11 @@ import Models
 public struct RealtimeUpdateResult: Equatable {
     public let channels: [Channel]
     public let mixtapes: [Mixtape]
+
+    public init(channels: [Channel], mixtapes: [Mixtape]) {
+        self.channels = channels
+        self.mixtapes = mixtapes
+    }
 }
 
 public struct DatabaseClient {

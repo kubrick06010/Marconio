@@ -9,10 +9,9 @@ DERIVED_DATA="$ROOT_DIR/.build/DerivedData"
 SWIFT_PM="$ROOT_DIR/.build/SwiftPM"
 APP_BUNDLE="$DERIVED_DATA/Build/Products/Debug/Marconio.app"
 
-export HOME="$ROOT_DIR/.build/home"
 export CLANG_MODULE_CACHE_PATH="$ROOT_DIR/.build/ModuleCache"
 export SWIFTPM_MODULECACHE_OVERRIDE="$ROOT_DIR/.build/ModuleCache"
-mkdir -p "$HOME" "$CLANG_MODULE_CACHE_PATH"
+mkdir -p "$CLANG_MODULE_CACHE_PATH"
 
 pkill -x "$APP_NAME" >/dev/null 2>&1 || true
 mkdir -p "$DERIVED_DATA" "$SWIFT_PM"
