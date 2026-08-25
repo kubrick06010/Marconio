@@ -91,6 +91,7 @@ public struct PlaybackReducer: ReducerProtocol {
                 state.playerState = .stopped
                 infoCenter.playbackState = .stopped
                 state.currentlyPlaying = nil
+                state.routePickerView = nil
                 player.stop()
 
                 return .merge(

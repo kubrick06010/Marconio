@@ -12,28 +12,27 @@ import LaceKit
 import XCTest
 
 class AppCoreTests: XCTestCase {
-    func testIntegration() {
+    @MainActor
+    func testIntegration() async {
         let state = AppReducer.State(channels: [],
                              mixtapes: [],
                              playback: .init(),
-                             appDelegateState: .init())
+                             appDelegate: .init())
+        let mainQueue = DispatchQueue.test
 
         let store = TestStore(initialState: state,
-                              reducer: AppReducer())
+                              reducer: { AppReducer(api: NoopAPI()) }) {
+            $0.dbClient = .noop
+            $0.mainQueue = mainQueue.eraseToAnyScheduler()
+        }
 
-        store.send(.loadInitialData)
-
-        store.receive(.channelsResponse(.success(.init(results: [], links: []))))
-        store.receive(.mixtapesResponse(.success(.init(results: [], links: []))))
-
-        store.send(.loadChannels)
-
-        store.receive(.channelsResponse(.success(.init(results: [], links: []))))
-
-        store.send(.loadMixtapes)
-
-        store.receive(.mixtapesResponse(.success(.init(results: [], links: []))))
+        await store.send(AppReducer.Action.loadInitialData)
+        await store.receive(AppReducer.Action.channelsResponse(.success(.init(results: [], links: []))))
+        await store.receive(AppReducer.Action.mixtapesResponse(.success(.init(results: [], links: []))))
+        await store.send(.loadChannels)
+        await store.receive(.channelsResponse(.success(.init(results: [], links: []))))
+        await store.send(.loadMixtapes)
+        await store.receive(.mixtapesResponse(.success(.init(results: [], links: []))))
+        await store.skipInFlightEffects()
     }
 }
-
-

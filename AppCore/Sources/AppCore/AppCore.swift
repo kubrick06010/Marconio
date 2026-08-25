@@ -19,6 +19,7 @@ extension DependencyValues {
     }
 }
 
+
 struct AutoUpdatingChannelsId {}
 
 public struct AppReducer: ReducerProtocol {
@@ -170,4 +171,3 @@ public struct AppReducer: ReducerProtocol {
         }
     }
 }
-

@@ -7,12 +7,12 @@
 
 import Foundation
 import ComposableArchitecture
-#if os(macOS)
+#if os(macOS) && canImport(Sparkle)
 import Sparkle
 #endif
 import SwiftUI
 
-#if os(macOS)
+#if os(macOS) && canImport(Sparkle)
 extension SPUStandardUpdaterController: DependencyKey {
     public static var liveValue = SPUStandardUpdaterController(updaterDelegate: nil,
                                                                userDriverDelegate: nil)
@@ -33,7 +33,7 @@ public struct AppDelegateReducer: ReducerProtocol {
         case continueActivity(NSUserActivity)
     }
 
-    #if os(macOS)
+    #if os(macOS) && canImport(Sparkle)
     @Dependency(\.sparkleUpdater) var updater
     #endif
 
@@ -58,7 +58,7 @@ public struct AppDelegateReducer: ReducerProtocol {
 #endif
                 return .none
             case .didFinishLaunching:
-#if os(macOS)
+#if os(macOS) && canImport(Sparkle)
                 if state.shouldAutoupdate {
                     updater.startUpdater()
                 }
