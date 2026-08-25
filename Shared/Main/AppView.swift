@@ -113,9 +113,11 @@ struct AppView: View {
             case .off:
                 viewStore.send(.playback(.stopPlayback))
             case .channelOne:
-                let playable = MediaPlayable(channel: viewStore.channels[0])
+                guard let channel = viewStore.channels.first else { return }
+                let playable = MediaPlayable(channel: channel)
                 viewStore.send(.playback(.loadPlayable(playable)))
             case .channelTwo:
+                guard viewStore.channels.indices.contains(1) else { return }
                 let playable = MediaPlayable(channel: viewStore.channels[1])
                 viewStore.send(.playback(.loadPlayable(playable)))
             default:

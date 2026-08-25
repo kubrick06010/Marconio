@@ -62,6 +62,12 @@ struct LCDPanelView: View {
                 HStack {
                     locationView
                     Spacer()
+                    if let routePicker = viewStore.playback.routePickerView {
+                        routePicker
+                            .buttonTint(Color(rgb: 0x262626))
+                            .frame(width: 28, height: 28)
+                            .accessibilityLabel("AirPlay")
+                    }
                 }
             }
             .padding(.horizontal)
@@ -264,6 +270,4 @@ private struct CountdownTicker: ViewModifier {
             }
     }
 }
-
-
 

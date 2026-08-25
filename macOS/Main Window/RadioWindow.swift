@@ -32,6 +32,7 @@ final class RadioWindow: NSWindow {
         titleVisibility = .hidden
         titlebarAppearsTransparent = true
         title = "Marconio"
+        isReleasedWhenClosed = false
 
         contentView = NSHostingView(rootView: AppView(store: store))
     }

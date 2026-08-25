@@ -105,6 +105,12 @@ public struct Channel: Codable, Equatable {
     public let now: Broadcast
     /// The broadcast that is next up after the broadcast listed at ``now``.
     public let next: Broadcast
+
+    public init(channelName: String, now: Broadcast, next: Broadcast) {
+        self.channelName = channelName
+        self.now = now
+        self.next = next
+    }
 }
 
 /// The top level representation of the response from the `/live` API endpoint.

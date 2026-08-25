@@ -19,6 +19,7 @@ extension DependencyValues {
     }
 }
 
+
 struct AutoUpdatingChannelsId {}
 
 public struct AppReducer: ReducerProtocol {
@@ -162,7 +163,24 @@ public struct AppReducer: ReducerProtocol {
         case let .db(.realTimeUpdate(.success(result))):
             state.channels = result.channels
             state.mixtapes = result.mixtapes
-            return .none
+
+            guard
+                let current = state.playback.currentlyPlaying,
+                let source = current.source,
+                case let .left(tunedChannel) = source,
+                let updatedChannel = result.channels.first(where: {
+                    $0.channelName == tunedChannel.channelName
+                })
+            else {
+                return .none
+            }
+
+            let updatedPlayable = MediaPlayable(channel: updatedChannel)
+            guard updatedPlayable != current else {
+                return .none
+            }
+
+            return .send(.playback(.refreshMetadata(updatedPlayable)))
         case .db(_):
             return .none
         case .settings:
@@ -170,4 +188,3 @@ public struct AppReducer: ReducerProtocol {
         }
     }
 }
-

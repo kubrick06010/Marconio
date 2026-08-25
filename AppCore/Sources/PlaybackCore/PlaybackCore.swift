@@ -16,6 +16,7 @@ import Models
 public struct PlaybackReducer: ReducerProtocol {
     public enum Action: Equatable {
         case loadPlayable(MediaPlayable)
+        case refreshMetadata(MediaPlayable)
         case pausePlayback
         case resumePlayback
         case stopPlayback
@@ -76,6 +77,14 @@ public struct PlaybackReducer: ReducerProtocol {
                     .send(.updateNowPlaying),
                     .send(.startMonitoringRemoteCommands)
                 )
+            case let .refreshMetadata(playable):
+                guard state.currentlyPlaying?.id == playable.id else {
+                    return .none
+                }
+
+                state.currentlyPlaying = playable
+                appTileClient.updateAppTile(playable)
+                return .send(.updateNowPlaying)
             case .pausePlayback, .externalCommand(.success(.externalPauseTap)):
                 state.playerState = .paused
                 infoCenter.playbackState = .paused
@@ -91,6 +100,7 @@ public struct PlaybackReducer: ReducerProtocol {
                 state.playerState = .stopped
                 infoCenter.playbackState = .stopped
                 state.currentlyPlaying = nil
+                state.routePickerView = nil
                 player.stop()
 
                 return .merge(
@@ -109,10 +119,10 @@ public struct PlaybackReducer: ReducerProtocol {
                 guard let nowPlaying = state.currentlyPlaying else {
                     return .none
                 }
+                let title = nowPlaying.subtitle ?? nowPlaying.title
                 let updateInformation = [
-                    MPMediaItemPropertyTitle: nowPlaying.title,
-                    MPMediaItemPropertyArtist: "NTS",
-                    MPMediaItemPropertyComposer: nowPlaying.subtitle ?? "",
+                    MPMediaItemPropertyTitle: title,
+                    MPMediaItemPropertyArtist: "NTS · \(nowPlaying.title)",
                     MPNowPlayingInfoPropertyIsLiveStream: NSNumber(booleanLiteral: true),
                     MPNowPlayingInfoPropertyAssetURL: nowPlaying.streamURL
 
@@ -147,6 +157,7 @@ public struct PlaybackReducer: ReducerProtocol {
 
 extension MPNowPlayingInfoCenter: DependencyKey {
     public static var liveValue: MPNowPlayingInfoCenter = .default()
+    public static var testValue: MPNowPlayingInfoCenter = .default()
 }
 
 extension DependencyValues {
