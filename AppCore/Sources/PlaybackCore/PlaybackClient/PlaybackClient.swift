@@ -81,7 +81,14 @@ private final class PlaybackClientDelegate: NSObject {
         let item = AVPlayerItem(asset: asset, automaticallyLoadedAssetKeys: requiredAssetKeys)
 
         let player = AVPlayer(playerItem: item)
+        #if os(macOS)
+        // NTS serves live ICY/MP3 feeds. Some third-party AirPlay receivers
+        // reject direct URL playback, so keep decoding on the Mac and send
+        // the selected route buffered audio instead.
+        player.allowsExternalPlayback = false
+        #else
         player.allowsExternalPlayback = true
+        #endif
 
         self.player = player
 
