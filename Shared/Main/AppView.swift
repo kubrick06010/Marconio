@@ -78,9 +78,13 @@ struct AppView: View {
                     .padding(.horizontal, 8)
                     .padding(.bottom, 5)
                 horizontalDivider
-                ZStack {
-                    if radioBand == .mixtapes {
-                        VStack(spacing: 0) {
+                GeometryReader { geometry in
+                    let grillHeight = radioBand == .mixtapes
+                        ? geometry.size.height * 0.625
+                        : geometry.size.height
+
+                    VStack(spacing: 0) {
+                        if radioBand == .mixtapes {
                             HStack {
                                 Text("INFINITE MIXTAPES")
                                     .font(.system(.headline).uppercaseSmallCaps())
@@ -98,11 +102,17 @@ struct AppView: View {
                                     viewStore.send(.playback(.loadPlayable(MediaPlayable(mixtape: mixtape))))
                                 }
                             )
-                            Spacer().frame(height: 25)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        } else {
+                            Spacer(minLength: 0)
                         }
                     }
+                    .frame(height: geometry.size.height - grillHeight, alignment: .top)
+                    .frame(maxHeight: .infinity, alignment: .top)
+
                     SpeakerGrillView()
-                        .offset(y: radioBand == .mixtapes ? 270 : 0)
+                        .frame(height: grillHeight)
+                        .frame(maxHeight: .infinity, alignment: .bottom)
                         .animation(.easeIn(duration: 0.2), value: radioBand)
                         .shadow(color: radioBand == .mixtapes ? .black.opacity(0.3) : .clear, radius: 3, x: 0, y: -5)
                 }
